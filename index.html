@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="theme-color" content="#0f0e0c" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1a1814" media="(prefers-color-scheme: dark)" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Chama da Felicidade" />
+<link rel="manifest" href="manifest.json" />
+<title>Chama da Felicidade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ink: #0f0e0c;
+  --paper: #f5f0e8;
+  --paper-dark: #ede8dc;
+  --paper-darker: #e2ddd0;
+  --muted: #4a4640;
+  --rule: rgba(15,14,12,0.15);
+  --rule-strong: rgba(15,14,12,0.35);
+  --teal: #1D9E75;
+  --blue: #2a6fc4;
+  --rose: #c44e78;
+  --amber: #b8720a;
+  --chart-stroke: #b8720a;
+  --chart-fill: rgba(184,114,10,0.2);
+  --radius: 3px;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f0ebe0;
+    --paper: #1a1814;
+    --paper-dark: #221f1a;
+    --paper-darker: #2a2620;
+    --muted: #a09890;
+    --rule: rgba(240,235,224,0.12);
+    --rule-strong: rgba(240,235,224,0.28);
+    --teal: #2bc992;
+    --blue: #5b9be8;
+    --rose: #e06090;
+    --amber: #e09030;
+    --chart-stroke: #e09030;
+    --chart-fill: rgba(224,144,48,0.2);
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 18px; line-height: 1.7; overscroll-behavior: none; }
+#app { display: flex; flex-direction: column; height: 100dvh; max-width: 480px; margin: 0 auto; overflow: hidden; }
+
+.masthead { flex-shrink: 0; text-align: center; padding: 16px 20px 10px; border-bottom: 2px solid var(--ink); background: var(--paper); }
+.masthead::before { content: ''; display: block; height: 1px; background: var(--ink); margin-bottom: 8px; }
+.masthead-kicker { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.masthead-title { font-family: var(--font-display); font-size: 30px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; color: var(--ink); }
+.masthead-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+.masthead-edition { background: var(--ink); color: var(--paper); padding: 3px 10px; font-size: 10px; letter-spacing: 1.5px; }
+
+.scroll-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.screen { display: none; padding: 22px; animation: fadeIn 0.2s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
+
+.bottom-nav { flex-shrink: 0; display: flex; border-top: 1.5px solid var(--ink); background: var(--paper); }
+.nav-btn { flex: 1; padding: 12px 4px 10px; background: none; border: none; border-right: 0.5px solid var(--rule-strong); font-family: var(--font-body); font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.nav-btn:last-child { border-right: none; }
+.nav-btn.active { color: var(--ink); background: var(--paper-dark); }
+.nav-icon { font-size: 20px; line-height: 1; }
+
+.user-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 22px; border-bottom: 0.5px solid var(--rule); background: var(--paper-dark); font-size: 14px; color: var(--muted); }
+.user-name { font-weight: 700; color: var(--ink); font-size: 15px; }
+.btn-signout { background: none; border: 1px solid var(--rule-strong); cursor: pointer; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-family: var(--font-body); padding: 4px 10px; border-radius: var(--radius); }
+
+#auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 65vh; text-align: center; gap: 24px; }
+.auth-title { font-family: var(--font-display); font-size: 26px; font-style: italic; color: var(--ink); }
+.auth-sub { font-size: 16px; color: var(--muted); max-width: 280px; line-height: 1.7; }
+.btn-google { display: flex; align-items: center; gap: 12px; padding: 14px 28px; border: 2px solid var(--ink); background: var(--paper); border-radius: var(--radius); font-family: var(--font-body); font-size: 15px; font-weight: 700; cursor: pointer; color: var(--ink); }
+.btn-google:hover { background: var(--paper-dark); }
+.btn-google svg { width: 22px; height: 22px; flex-shrink: 0; }
+.auth-loading { font-size: 14px; color: var(--muted); font-style: italic; display: none; }
+
+.frase-block { border-left: 3px solid var(--amber); padding: 12px 16px; margin-bottom: 20px; background: var(--paper-dark); }
+.frase-text { font-family: var(--font-display); font-size: 16px; font-style: italic; color: var(--ink); line-height: 1.5; }
+.frase-autor { font-size: 12px; font-weight: 500; color: var(--muted); margin-top: 4px; }
+
+.streak-block { display: flex; align-items: center; gap: 18px; padding: 16px; border: 2px solid var(--ink); margin-bottom: 20px; }
+.streak-number { font-family: var(--font-display); font-size: 56px; font-weight: 700; line-height: 1; }
+.streak-info { flex: 1; }
+.streak-label { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.streak-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.streak-record { font-size: 12px; color: var(--amber); font-weight: 700; margin-top: 4px; }
+.streak-fire { font-size: 30px; }
+
+.section-rule { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; margin-top: 4px; }
+.section-rule span { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.section-rule::before, .section-rule::after { content: ''; flex: 1; height: 1px; background: var(--rule-strong); }
+
+.entry-card { border: 1px solid var(--rule-strong); border-left: 4px solid var(--ink); padding: 14px 16px; margin-bottom: 12px; background: var(--paper); }
+.entry-card:hover { background: var(--paper-dark); }
+.entry-card-date { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.entry-card-headline { font-family: var(--font-display); font-size: 17px; line-height: 1.4; color: var(--ink); margin-bottom: 6px; }
+.entry-card-lead { font-size: 14px; color: var(--muted); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.entry-card-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.chip-tag { font-size: 11px; font-weight: 500; padding: 3px 10px; border: 1px solid var(--rule-strong); color: var(--muted); }
+.entry-card-actions { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+.btn-card-action { background: none; border: 1px solid var(--rule-strong); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); font-family: var(--font-body); padding: 4px 10px; cursor: pointer; border-radius: var(--radius); }
+.btn-card-action.share { color: var(--teal); border-color: var(--teal); }
+.btn-card-action.del { color: var(--rose); border-color: var(--rose); }
+
+.empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
+.empty-state p { font-family: var(--font-display); font-style: italic; font-size: 20px; }
+.empty-state small { font-size: 15px; margin-top: 8px; display: block; }
+
+.btn-primary { width: 100%; padding: 16px; background: var(--ink); color: var(--paper); border: none; border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 20px; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-secondary { width: 100%; padding: 14px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
+.btn-secondary:hover { background: var(--paper-dark); }
+
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 20px; font-family: var(--font-body); }
+.form-group { margin-bottom: 22px; }
+.form-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.form-input, .form-textarea { width: 100%; border: none; border-bottom: 2px solid var(--rule-strong); border-radius: 0; padding: 10px 0; font-family: var(--font-body); font-size: 17px; color: var(--ink); background: transparent; outline: none; }
+.form-input:focus, .form-textarea:focus { border-color: var(--ink); }
+.form-input.headline-input { font-family: var(--font-display); font-size: 20px; font-style: italic; }
+.form-textarea { resize: none; line-height: 1.7; }
+.reflexiva-text { font-size: 14px; color: var(--muted); font-style: italic; padding: 8px 0; border-bottom: 1px solid var(--rule); margin-bottom: 8px; }
+.gratitude-row { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px; }
+.gratitude-num { font-family: var(--font-display); font-size: 22px; color: var(--muted); line-height: 1.7; min-width: 18px; font-weight: 700; }
+.char-count { font-size: 12px; font-weight: 500; color: var(--muted); text-align: right; margin-top: 6px; }
+.palavra-dia-input { font-size: 20px; font-weight: 700; text-align: center; letter-spacing: 2px; }
+
+.triade-group { margin-bottom: 16px; }
+.triade-name { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1.5px solid var(--rule); }
+.triade-name.t1 { color: var(--teal); border-color: var(--teal); }
+.triade-name.t2 { color: var(--blue); border-color: var(--blue); }
+.triade-name.t3 { color: var(--rose); border-color: var(--rose); }
+.triade-name.t4 { color: var(--amber); border-color: var(--amber); }
+.chips-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.eixo-chip { font-size: 13px; font-weight: 500; padding: 6px 14px; border: 1.5px solid var(--rule-strong); background: var(--paper); color: var(--muted); cursor: pointer; font-family: var(--font-body); }
+.eixo-chip.active { color: #fff; }
+.eixo-chip.a1.active { background: var(--teal); border-color: var(--teal); }
+.eixo-chip.a2.active { background: var(--blue); border-color: var(--blue); }
+.eixo-chip.a3.active { background: var(--rose); border-color: var(--rose); }
+.eixo-chip.a4.active { background: var(--amber); border-color: var(--amber); }
+
+.search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+.search-input { flex: 1; border: 2px solid var(--rule-strong); border-radius: var(--radius); padding: 10px 14px; font-family: var(--font-body); font-size: 16px; color: var(--ink); background: var(--paper); outline: none; }
+.search-input:focus { border-color: var(--ink); }
+.search-filter { border: 2px solid var(--rule-strong); border-radius: var(--radius); padding: 10px; font-family: var(--font-body); font-size: 13px; color: var(--ink); background: var(--paper); outline: none; cursor: pointer; max-width: 140px; }
+
+.report-header { margin-bottom: 22px; }
+.report-week { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1.2; }
+.report-period { font-size: 13px; font-weight: 500; color: var(--muted); margin-top: 6px; }
+.headline-item { display: flex; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rule); align-items: flex-start; }
+.headline-day { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); min-width: 32px; margin-top: 4px; }
+.headline-text { font-family: var(--font-display); font-size: 17px; line-height: 1.45; color: var(--ink); font-style: italic; }
+.word-cloud-block { margin-top: 24px; padding: 16px; background: var(--paper-dark); border: 1px solid var(--rule-strong); }
+.word-cloud-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.word-cloud-words { display: flex; flex-wrap: wrap; gap: 12px; align-items: baseline; }
+.word-cloud-word { font-family: var(--font-display); color: var(--ink); }
+
+.chart-container { margin: 20px 0; display: flex; justify-content: center; }
+.chart-legend { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.chart-legend-item { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.chart-legend-bar { height: 10px; border-radius: 2px; min-width: 4px; }
+.chart-legend-label { color: var(--muted); font-weight: 500; flex: 1; }
+.chart-legend-count { font-weight: 700; color: var(--ink); font-size: 14px; }
+
+.streak-history { margin-top: 8px; }
+.streak-hist-item { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--rule); }
+.streak-hist-num { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--ink); min-width: 48px; }
+.streak-hist-info { flex: 1; }
+.streak-hist-label { font-size: 13px; font-weight: 500; color: var(--muted); }
+.streak-hist-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; background: var(--amber); color: #fff; letter-spacing: 1px; }
+
+.month-entry { border-left: 3px solid var(--rule-strong); padding: 14px 16px; margin-bottom: 14px; }
+.month-entry-date { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.month-entry-headline { font-family: var(--font-display); font-size: 17px; color: var(--ink); margin-bottom: 6px; font-style: italic; }
+.month-entry-lead { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+.month-entry-grat { font-size: 13px; color: var(--muted); line-height: 1.8; }
+.month-entry-grat span { display: block; }
+.month-entry-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.month-select { width: 100%; border: 2px solid var(--ink); border-radius: var(--radius); padding: 12px 14px; font-family: var(--font-body); font-size: 16px; font-weight: 500; color: var(--ink); background: var(--paper); outline: none; margin-bottom: 20px; cursor: pointer; }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200; display: flex; align-items: flex-end; justify-content: center; }
+.modal-overlay.hidden { display: none; }
+.modal-box { background: var(--paper); width: 100%; max-width: 480px; padding: 24px; max-height: 85vh; overflow-y: auto; border-top: 3px solid var(--ink); }
+.modal-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 20px; color: var(--ink); }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.modal-actions .btn-primary, .modal-actions .btn-secondary { margin-top: 0; flex: 1; }
+
+.confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.confirm-overlay.hidden { display: none; }
+.confirm-box { background: var(--paper); width: 100%; max-width: 340px; padding: 28px 24px; border-top: 3px solid var(--rose); }
+.confirm-title { font-family: var(--font-display); font-size: 20px; color: var(--ink); margin-bottom: 10px; }
+.confirm-sub { font-size: 15px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+.confirm-actions { display: flex; gap: 10px; }
+.btn-danger { flex: 1; padding: 14px; background: var(--rose); color: #fff; border: none; border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+.btn-cancel { flex: 1; padding: 14px; background: var(--paper); color: var(--ink); border: 2px solid var(--ink); border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; }
+
+#loading { position: fixed; inset: 0; background: var(--paper); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; z-index: 100; }
+.loading-title { font-family: var(--font-display); font-size: 26px; font-style: italic; }
+.loading-dots { display: flex; gap: 8px; }
+.loading-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); animation: pulse 1.2s ease-in-out infinite; }
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%,100%{opacity:.2} 50%{opacity:1} }
+
+.toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--paper); padding: 12px 24px; font-size: 14px; font-weight: 500; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; z-index: 50; border-radius: var(--radius); }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+@keyframes flamePop { 0%{transform:scale(1)} 50%{transform:scale(1.4)} 100%{transform:scale(1)} }
+.flame-pop { animation: flamePop 0.4s ease; }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="loading-title">Chama da Felicidade</div>
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- MODAL EDITAR -->
+<div class="modal-overlay hidden" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-title">Editar chama</div>
+    <div class="form-group">
+      <label class="form-label">Manchete</label>
+      <input class="form-input headline-input" id="edit-headline" type="text" maxlength="120" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Lead</label>
+      <textarea class="form-textarea" id="edit-lead" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Gratidões</label>
+      <input class="form-input" id="edit-grat1" type="text" placeholder="1." maxlength="200" style="margin-bottom:10px;" />
+      <input class="form-input" id="edit-grat2" type="text" placeholder="2." maxlength="200" style="margin-bottom:10px;" />
+      <input class="form-input" id="edit-grat3" type="text" placeholder="3." maxlength="200" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeEdit()">Cancelar</button>
+      <button class="btn-primary" onclick="saveEdit()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM EXCLUIR -->
+<div class="confirm-overlay hidden" id="confirm-modal">
+  <div class="confirm-box">
+    <div class="confirm-title">Excluir chama?</div>
+    <div class="confirm-sub">Esta ação não pode ser desfeita.</div>
+    <div class="confirm-actions">
+      <button class="btn-cancel" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn-danger" onclick="confirmDelete()">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" style="display:none;">
+  <div class="masthead">
+    <div class="masthead-kicker">Diário pessoal</div>
+    <div class="masthead-title">Chama da Felicidade</div>
+    <div class="masthead-meta">
+      <span id="today-label">—</span>
+      <span class="masthead-edition">Ed. diária</span>
+      <span id="edition-num">—</span>
+    </div>
+  </div>
+
+  <div class="user-bar" id="user-bar" style="display:none;">
+    <span>Olá, <span class="user-name" id="user-name-label">—</span></span>
+    <button class="btn-signout" onclick="signOut()">Sair</button>
+  </div>
+
+  <div class="scroll-area">
+
+    <!-- AUTH -->
+    <div class="screen active" id="screen-auth">
+      <div id="auth-screen">
+        <div>
+          <div class="masthead-kicker" style="margin-bottom:10px;">Bem-vindo</div>
+          <div class="auth-title">Acenda sua chama diária</div>
+        </div>
+        <p class="auth-sub">Registre gratidão e escreva a manchete do seu dia. Um hábito simples que transforma.</p>
+        <button class="btn-google" id="btn-google" onclick="signInWithGoogle()">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Entrar com Google
+        </button>
+        <div class="auth-loading" id="auth-loading">Verificando login...</div>
+      </div>
+    </div>
+
+    <!-- HOME -->
+    <div class="screen" id="screen-home">
+      <div class="frase-block">
+        <div class="frase-text" id="frase-text">—</div>
+        <div class="frase-autor" id="frase-autor">—</div>
+      </div>
+      <div class="streak-block">
+        <div class="streak-number" id="streak-num">0</div>
+        <div class="streak-info">
+          <div class="streak-label">Dias seguidos</div>
+          <div class="streak-sub" id="streak-sub">Comece hoje</div>
+          <div class="streak-record" id="streak-record"></div>
+        </div>
+        <div class="streak-fire" id="streak-fire">🔥</div>
+      </div>
+      <div class="section-rule"><span>Manchetes recentes</span></div>
+      <div id="entries-list"><div class="empty-state"><p>Nenhuma chama ainda.</p><small>Registre seu primeiro dia.</small></div></div>
+      <button class="btn-primary" id="btn-nova-chama" onclick="goTo('entry')">+ Nova chama de hoje</button>
+    </div>
+
+    <!-- ENTRY FORM -->
+    <div class="screen" id="screen-entry">
+      <button class="back-link" onclick="goTo('home')">← Voltar</button>
+      <div class="section-rule"><span>Chama de hoje</span></div>
+      <div class="form-group">
+        <label class="form-label">Manchete do dia</label>
+        <input class="form-input headline-input" id="inp-headline" type="text" placeholder='"O título que resume seu dia..."' maxlength="120" />
+        <div class="char-count"><span id="headline-count">0</span>/120</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lead — o essencial do dia</label>
+        <textarea class="form-textarea" id="inp-lead" rows="4" maxlength="500" placeholder="Quem, o quê, quando, onde, por quê. Em 3 frases, o que foi este dia?"></textarea>
+        <div class="char-count"><span id="lead-count">0</span>/500</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Gratidão</label>
+        <div class="reflexiva-text" id="reflexiva-q">Pelo que você é grato hoje?</div>
+        <div class="gratitude-row"><span class="gratitude-num">1</span><input class="form-input" id="grat-1" type="text" placeholder="Sou grato por..." maxlength="200" /></div>
+        <div class="gratitude-row"><span class="gratitude-num">2</span><input class="form-input" id="grat-2" type="text" placeholder="Sou grato por..." maxlength="200" /></div>
+        <div class="gratitude-row"><span class="gratitude-num">3</span><input class="form-input" id="grat-3" type="text" placeholder="Sou grato por..." maxlength="200" /></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Palavra do dia</label>
+        <input class="form-input palavra-dia-input" id="inp-palavra" type="text" placeholder="Uma palavra que resume hoje..." maxlength="30" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Eixo da Roda da Vida</label>
+        <div class="triade-group">
+          <div class="triade-name t1">Pessoal</div>
+          <div class="chips-row">
+            <div class="eixo-chip a1" data-eixo="Saúde e Disposição">Saúde e Disposição</div>
+            <div class="eixo-chip a1" data-eixo="Desenvolvimento Intelectual">Desenvolvimento Intelectual</div>
+            <div class="eixo-chip a1" data-eixo="Equilíbrio Emocional">Equilíbrio Emocional</div>
+          </div>
+        </div>
+        <div class="triade-group">
+          <div class="triade-name t2">Profissional</div>
+          <div class="chips-row">
+            <div class="eixo-chip a2" data-eixo="Realização e Propósito">Realização e Propósito</div>
+            <div class="eixo-chip a2" data-eixo="Recursos Financeiros">Recursos Financeiros</div>
+            <div class="eixo-chip a2" data-eixo="Contribuição Social">Contribuição Social</div>
+          </div>
+        </div>
+        <div class="triade-group">
+          <div class="triade-name t3">Relacionamentos</div>
+          <div class="chips-row">
+            <div class="eixo-chip a3" data-eixo="Relacionamento Amoroso">Relacionamento Amoroso</div>
+            <div class="eixo-chip a3" data-eixo="Família">Família</div>
+            <div class="eixo-chip a3" data-eixo="Vida Social">Vida Social</div>
+          </div>
+        </div>
+        <div class="triade-group">
+          <div class="triade-name t4">Qualidade de Vida</div>
+          <div class="chips-row">
+            <div class="eixo-chip a4" data-eixo="Criatividade e Hobbies">Criatividade e Hobbies</div>
+            <div class="eixo-chip a4" data-eixo="Plenitude e Felicidade">Plenitude e Felicidade</div>
+            <div class="eixo-chip a4" data-eixo="Espiritualidade">Espiritualidade</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" id="save-btn" onclick="saveEntry()">Publicar chama 🔥</button>
+    </div>
+
+    <!-- BUSCA -->
+    <div class="screen" id="screen-search">
+      <div class="section-rule"><span>Busca no histórico</span></div>
+      <div class="search-bar">
+        <input class="search-input" id="search-input" type="text" placeholder="Buscar por palavra..." oninput="renderSearch()" />
+        <select class="search-filter" id="search-eixo" onchange="renderSearch()">
+          <option value="">Todos os eixos</option>
+          <option>Saúde e Disposição</option>
+          <option>Desenvolvimento Intelectual</option>
+          <option>Equilíbrio Emocional</option>
+          <option>Realização e Propósito</option>
+          <option>Recursos Financeiros</option>
+          <option>Contribuição Social</option>
+          <option>Relacionamento Amoroso</option>
+          <option>Família</option>
+          <option>Vida Social</option>
+          <option>Criatividade e Hobbies</option>
+          <option>Plenitude e Felicidade</option>
+          <option>Espiritualidade</option>
+        </select>
+      </div>
+      <div id="search-results"><div class="empty-state"><p>Digite para buscar.</p></div></div>
+    </div>
+
+    <!-- SEMANA -->
+    <div class="screen" id="screen-report">
+      <div class="report-header">
+        <div class="report-week">Jornal da semana</div>
+        <div class="report-period" id="report-period">—</div>
+      </div>
+      <div class="section-rule"><span>3 manchetes em destaque</span></div>
+      <div id="report-headlines"></div>
+      <div style="margin-top:24px;">
+        <div class="section-rule"><span>Roda da vida da semana</span></div>
+        <div class="chart-container"><canvas id="roda-chart" width="260" height="260"></canvas></div>
+        <div class="chart-legend" id="roda-legend"></div>
+      </div>
+      <div style="margin-top:24px;">
+        <div class="section-rule"><span>Histórico de sequências</span></div>
+        <div class="streak-history" id="streak-history"></div>
+      </div>
+      <div class="word-cloud-block" id="word-cloud-block" style="display:none;margin-top:24px;">
+        <div class="word-cloud-label">Palavras da gratidão</div>
+        <div class="word-cloud-words" id="word-cloud-words"></div>
+      </div>
+    </div>
+
+    <!-- MÊS -->
+    <div class="screen" id="screen-month">
+      <div class="report-header"><div class="report-week">Relatório mensal</div></div>
+      <select class="month-select" id="month-select" onchange="renderMonth()"></select>
+      <div class="section-rule"><span>Todas as chamas</span></div>
+      <div id="month-entries"></div>
+      <button class="btn-primary" id="export-btn" onclick="exportMonth()" style="display:none;">Exportar e compartilhar</button>
+    </div>
+
+  </div>
+
+  <nav class="bottom-nav" id="bottom-nav" style="display:none;">
+    <button class="nav-btn active" id="nav-home" onclick="goTo('home')"><span class="nav-icon">😃</span>Hoje</button>
+    <button class="nav-btn" id="nav-entry" onclick="goTo('entry')"><span class="nav-icon">✍️</span>Escrever</button>
+    <button class="nav-btn" id="nav-search" onclick="goTo('search')"><span class="nav-icon">🔍</span>Buscar</button>
+    <button class="nav-btn" id="nav-report" onclick="goTo('report')"><span class="nav-icon">📊</span>Semana</button>
+    <button class="nav-btn" id="nav-month" onclick="goTo('month')"><span class="nav-icon">📅</span>Mês</button>
+  </nav>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider,
+  signInWithPopup, signInWithRedirect, getRedirectResult,
+  browserLocalPersistence, setPersistence,
+  signOut as fbSignOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, addDoc, updateDoc, deleteDoc,
+  doc, getDocs, query, where, orderBy, limit, Timestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDYzFgouAfTEQykiXfnykSFYkffR8Uuf8Q",
+  authDomain: "chama-da-felicidade-f0a97.firebaseapp.com",
+  projectId: "chama-da-felicidade-f0a97",
+  storageBucket: "chama-da-felicidade-f0a97.firebasestorage.app",
+  messagingSenderId: "583712540808",
+  appId: "1:583712540808:web:0844c68a196fcf6e80773d",
+  measurementId: "G-7QXXB9X8LT"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: 'select_account' });
+
+let currentUser = null;
+let allEntries = [];
+let editingId = null;
+let deletingId = null;
+
+const MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MONTHS_SHORT = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const DAYS_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const DAYS_FULL = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+
+const FRASES = [
+  { text: "A gratidão transforma o que temos em suficiente.", autor: "Melody Beattie" },
+  { text: "Cada dia é uma nova página da sua história.", autor: "Chama da Felicidade" },
+  { text: "Pequenas coisas fazem grandes diferenças.", autor: "Desconhecido" },
+  { text: "A felicidade não é algo pronto. Ela vem das suas próprias ações.", autor: "Dalai Lama" },
+  { text: "Quem não é grato pelo pouco, não será grato pelo muito.", autor: "Provérbio" },
+  { text: "Viva cada dia como se fosse a primeira edição da sua vida.", autor: "Chama da Felicidade" },
+  { text: "O presente é um presente.", autor: "Desconhecido" },
+  { text: "Gratidão é a memória do coração.", autor: "Jean Massieu" },
+  { text: "O segredo é se concentrar no que você tem, não no que não tem.", autor: "Oprah Winfrey" },
+  { text: "Cada momento é uma nova oportunidade de ser a melhor versão de si.", autor: "Chama da Felicidade" },
+];
+
+const REFLEXIVAS = [
+  "Pelo que você é grato hoje?",
+  "O que de bom aconteceu hoje?",
+  "Quem te fez bem hoje?",
+  "Que momento do dia você quer guardar?",
+  "O que te trouxe alegria hoje?",
+  "O que você aprendeu hoje?",
+  "Que simples detalhe fez diferença hoje?",
+];
+
+const EIXOS_COLORS = {
+  'Saúde e Disposição': '#1D9E75',
+  'Desenvolvimento Intelectual': '#2bc992',
+  'Equilíbrio Emocional': '#5ecba1',
+  'Realização e Propósito': '#2a6fc4',
+  'Recursos Financeiros': '#5b9be8',
+  'Contribuição Social': '#85b7eb',
+  'Relacionamento Amoroso': '#c44e78',
+  'Família': '#e06090',
+  'Vida Social': '#e893b5',
+  'Criatividade e Hobbies': '#b8720a',
+  'Plenitude e Felicidade': '#e09030',
+  'Espiritualidade': '#f0b860',
+};
+
+// ── AUTH ──
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+async function initAuth() {
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+  } catch(e) {
+    console.warn('setPersistence error:', e);
+  }
+
+  try {
+    const redirectResult = await getRedirectResult(auth);
+    if (redirectResult?.user) {
+      console.log('Redirect auth OK:', redirectResult.user.email);
+    }
+  } catch(e) {
+    console.error('getRedirectResult error:', e.code, e.message);
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('auth-loading').style.display = 'none';
+    document.getElementById('btn-google').style.display = 'flex';
+
+    if (user) {
+      currentUser = user;
+      document.getElementById('user-name-label').textContent = user.displayName?.split(' ')[0] || 'você';
+      document.getElementById('user-bar').style.display = 'flex';
+      document.getElementById('bottom-nav').style.display = 'flex';
+      await loadEntries();
+      goTo('home');
+    } else {
+      currentUser = null;
+      document.getElementById('user-bar').style.display = 'none';
+      document.getElementById('bottom-nav').style.display = 'none';
+      goTo('auth');
+    }
+  });
+}
+
+initAuth();
+
+window.signInWithGoogle = async () => {
+  const btnGoogle = document.getElementById('btn-google');
+  const authLoading = document.getElementById('auth-loading');
+  btnGoogle.style.display = 'none';
+  authLoading.style.display = 'block';
+  authLoading.textContent = 'Conectando...';
+
+  try {
+    if (isMobile) {
+      await signInWithRedirect(auth, provider);
+    } else {
+      await signInWithPopup(auth, provider);
+    }
+  } catch(e) {
+    console.error('signIn error:', e.code, e.message);
+    btnGoogle.style.display = 'flex';
+    authLoading.style.display = 'none';
+    if (e.code === 'auth/popup-blocked') {
+      showToast('Popup bloqueado. Libere popups nas configurações do Chrome.');
+    } else if (e.code === 'auth/popup-closed-by-user') {
+      showToast('Login cancelado.');
+    } else {
+      showToast('Erro: ' + (e.code || 'tente novamente'));
+    }
+  }
+};
+
+window.signOut = async () => {
+  await fbSignOut(auth);
+};
+
+// ── NAV ──
+window.goTo = (screen) => {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+  const btn = document.getElementById('nav-' + screen);
+  if (btn) btn.classList.add('active');
+  document.querySelector('.scroll-area').scrollTop = 0;
+  if (screen === 'report') renderReport();
+  if (screen === 'month') { populateMonthSelect(); renderMonth(); }
+  if (screen === 'search') renderSearch();
+  if (screen === 'home') renderHome();
+};
+
+// ── LOAD (com limit para evitar problema de índice) ──
+async function loadEntries() {
+  if (!currentUser) return;
+  try {
+    const q = query(
+      collection(db, 'chamadas'),
+      where('uid', '==', currentUser.uid),
+      orderBy('createdAt', 'desc'),
+      limit(200)
+    );
+    const snap = await getDocs(q);
+    allEntries = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e) {
+    console.error('loadEntries error:', e);
+    allEntries = [];
+  }
+  renderHome();
+  updateMasthead();
+}
+
+// ── HOME ──
+function renderHome() {
+  const idx = new Date().getDate() % FRASES.length;
+  document.getElementById('frase-text').textContent = `"${FRASES[idx].text}"`;
+  document.getElementById('frase-autor').textContent = `— ${FRASES[idx].autor}`;
+
+  const ridx = new Date().getDate() % REFLEXIVAS.length;
+  const el = document.getElementById('reflexiva-q');
+  if (el) el.textContent = REFLEXIVAS[ridx];
+
+  const streak = calcStreak();
+  const record = calcRecord();
+  document.getElementById('streak-num').textContent = streak;
+  document.getElementById('streak-sub').textContent = streak === 0 ? 'Comece hoje' : streak === 1 ? '1 dia — continue!' : `${streak} dias — incrível!`;
+  document.getElementById('streak-record').textContent = record > 0 ? `🏆 Recorde: ${record} dias` : '';
+
+  const jaPublicou = jaPublicouHoje();
+  const btnNova = document.getElementById('btn-nova-chama');
+  btnNova.textContent = jaPublicou ? '✅ Chama de hoje publicada' : '+ Nova chama de hoje';
+  btnNova.disabled = jaPublicou;
+  btnNova.style.opacity = jaPublicou ? '0.5' : '1';
+
+  const list = document.getElementById('entries-list');
+  if (allEntries.length === 0) {
+    list.innerHTML = `<div class="empty-state"><p>Nenhuma chama ainda.</p><small>Registre seu primeiro dia.</small></div>`;
+    return;
+  }
+  list.innerHTML = allEntries.slice(0, 5).map(entryCardHTML).join('');
+}
+
+function jaPublicouHoje() {
+  if (allEntries.length === 0) return false;
+  const d = toDate(allEntries[0].createdAt);
+  const now = new Date();
+  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+}
+
+function entryCardHTML(e) {
+  const d = toDate(e.createdAt);
+  const dateStr = `${DAYS_FULL[d.getDay()]}, ${d.getDate()} de ${MONTHS_PT[d.getMonth()]}`;
+  const tags = (e.eixos||[]).map(t => `<span class="chip-tag">${t}</span>`).join('');
+  const palavra = e.palavra ? `<span class="chip-tag" style="color:var(--amber);border-color:var(--amber);">${e.palavra}</span>` : '';
+  return `<div class="entry-card">
+    <div class="entry-card-date">${dateStr}</div>
+    <div class="entry-card-headline">"${e.headline}"</div>
+    ${e.lead ? `<div class="entry-card-lead">${e.lead}</div>` : ''}
+    ${tags||palavra ? `<div class="entry-card-tags">${palavra}${tags}</div>` : ''}
+    <div class="entry-card-actions">
+      <button class="btn-card-action share" onclick="shareEntry('${e.id}')">Compartilhar</button>
+      <button class="btn-card-action" onclick="openEdit('${e.id}')">Editar</button>
+      <button class="btn-card-action del" onclick="askDelete('${e.id}')">Excluir</button>
+    </div>
+  </div>`;
+}
+
+// ── STREAK ──
+function calcStreak() {
+  if (!allEntries.length) return 0;
+  const dates = uniqueDates();
+  const todayMs = todayMidnight();
+  if (dates[0] !== todayMs && dates[0] !== todayMs - 86400000) return 0;
+  let s = 1;
+  for (let i = 1; i < dates.length; i++) {
+    if (dates[i-1] - dates[i] === 86400000) s++;
+    else break;
+  }
+  return s;
+}
+
+function calcRecord() {
+  if (!allEntries.length) return 0;
+  const dates = uniqueDates();
+  let max = 1, cur = 1;
+  for (let i = 1; i < dates.length; i++) {
+    if (dates[i-1] - dates[i] === 86400000) { cur++; if (cur > max) max = cur; }
+    else cur = 1;
+  }
+  return max;
+}
+
+function calcAllStreaks() {
+  if (!allEntries.length) return [];
+  const dates = uniqueDates();
+  const streaks = [];
+  let cur = 1, endDate = dates[0];
+  for (let i = 1; i < dates.length; i++) {
+    if (dates[i-1] - dates[i] === 86400000) cur++;
+    else { streaks.push({ days: cur, end: endDate }); cur = 1; endDate = dates[i]; }
+  }
+  streaks.push({ days: cur, end: endDate });
+  return streaks.sort((a,b) => b.days - a.days).slice(0, 5);
+}
+
+function uniqueDates() {
+  const set = new Set(allEntries.map(e => {
+    const d = toDate(e.createdAt);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  }));
+  return [...set].sort((a,b) => b - a);
+}
+
+function todayMidnight() {
+  const t = new Date();
+  return new Date(t.getFullYear(), t.getMonth(), t.getDate()).getTime();
+}
+
+function updateMasthead() {
+  const now = new Date();
+  document.getElementById('today-label').textContent = `${DAYS_PT[now.getDay()]}, ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]}`;
+  document.getElementById('edition-num').textContent = `Ed. ${allEntries.length + 1}`;
+}
+
+// ── SAVE ──
+window.saveEntry = async () => {
+  const headline = document.getElementById('inp-headline').value.trim();
+  const lead = document.getElementById('inp-lead').value.trim();
+  const grat1 = document.getElementById('grat-1').value.trim();
+  const grat2 = document.getElementById('grat-2').value.trim();
+  const grat3 = document.getElementById('grat-3').value.trim();
+  const palavra = document.getElementById('inp-palavra').value.trim();
+  const eixos = [...document.querySelectorAll('.eixo-chip.active')].map(c => c.dataset.eixo);
+
+  if (!headline) { showToast('Escreva a manchete do dia.'); return; }
+  if (!grat1) { showToast('Adicione pelo menos 1 gratidão.'); return; }
+
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true; btn.textContent = 'Publicando...';
+
+  try {
+    const entry = { uid: currentUser.uid, headline, lead, gratidoes: [grat1,grat2,grat3].filter(Boolean), palavra, eixos, createdAt: Timestamp.now() };
+    const ref = await addDoc(collection(db, 'chamadas'), entry);
+    allEntries.unshift({ id: ref.id, ...entry });
+    clearForm();
+    renderHome();
+    updateMasthead();
+    const fire = document.getElementById('streak-fire');
+    fire.classList.add('flame-pop');
+    setTimeout(() => fire.classList.remove('flame-pop'), 500);
+    showToast('Chama publicada! 🔥');
+    setTimeout(() => goTo('home'), 700);
+  } catch(e) { showToast('Erro ao salvar. Tente novamente.'); console.error(e); }
+  finally { btn.disabled = false; btn.textContent = 'Publicar chama 🔥'; }
+};
+
+function clearForm() {
+  ['inp-headline','inp-lead','grat-1','grat-2','grat-3','inp-palavra'].forEach(id => document.getElementById(id).value = '');
+  document.querySelectorAll('.eixo-chip.active').forEach(c => c.classList.remove('active'));
+  document.getElementById('headline-count').textContent = '0';
+  document.getElementById('lead-count').textContent = '0';
+}
+
+// ── EDITAR ──
+window.openEdit = (id) => {
+  const e = allEntries.find(x => x.id === id);
+  if (!e) return;
+  editingId = id;
+  document.getElementById('edit-headline').value = e.headline || '';
+  document.getElementById('edit-lead').value = e.lead || '';
+  document.getElementById('edit-grat1').value = e.gratidoes?.[0] || '';
+  document.getElementById('edit-grat2').value = e.gratidoes?.[1] || '';
+  document.getElementById('edit-grat3').value = e.gratidoes?.[2] || '';
+  document.getElementById('edit-modal').classList.remove('hidden');
+};
+window.closeEdit = () => { document.getElementById('edit-modal').classList.add('hidden'); editingId = null; };
+window.saveEdit = async () => {
+  if (!editingId) return;
+  const headline = document.getElementById('edit-headline').value.trim();
+  const lead = document.getElementById('edit-lead').value.trim();
+  const g1 = document.getElementById('edit-grat1').value.trim();
+  const g2 = document.getElementById('edit-grat2').value.trim();
+  const g3 = document.getElementById('edit-grat3').value.trim();
+  if (!headline) { showToast('Manchete não pode ser vazia.'); return; }
+  try {
+    await updateDoc(doc(db, 'chamadas', editingId), { headline, lead, gratidoes: [g1,g2,g3].filter(Boolean) });
+    const idx = allEntries.findIndex(x => x.id === editingId);
+    if (idx >= 0) Object.assign(allEntries[idx], { headline, lead, gratidoes: [g1,g2,g3].filter(Boolean) });
+    closeEdit(); renderHome(); showToast('Chama atualizada!');
+  } catch(e) { showToast('Erro ao editar.'); console.error(e); }
+};
+
+// ── EXCLUIR ──
+window.askDelete = (id) => { deletingId = id; document.getElementById('confirm-modal').classList.remove('hidden'); };
+window.closeConfirm = () => { document.getElementById('confirm-modal').classList.add('hidden'); deletingId = null; };
+window.confirmDelete = async () => {
+  if (!deletingId) return;
+  try {
+    await deleteDoc(doc(db, 'chamadas', deletingId));
+    allEntries = allEntries.filter(e => e.id !== deletingId);
+    closeConfirm(); renderHome(); showToast('Chama excluída.');
+  } catch(e) { showToast('Erro ao excluir.'); console.error(e); }
+};
+
+// ── COMPARTILHAR ──
+window.shareEntry = (id) => {
+  const e = allEntries.find(x => x.id === id);
+  if (!e) return;
+  const d = toDate(e.createdAt);
+  const text = `🔥 Chama da Felicidade\n${DAYS_FULL[d.getDay()]}, ${d.getDate()} de ${MONTHS_PT[d.getMonth()]}\n\n"${e.headline}"\n\n${e.lead||''}\n\n#ChamaDaFelicidade`;
+  if (navigator.share) { navigator.share({ title:'Chama da Felicidade', text }).catch(console.error); }
+  else { navigator.clipboard?.writeText(text).then(() => showToast('Copiado!')); }
+};
+
+// ── BUSCA ──
+window.renderSearch = () => {
+  const term = document.getElementById('search-input').value.toLowerCase().trim();
+  const eixo = document.getElementById('search-eixo').value;
+  if (!term && !eixo) {
+    document.getElementById('search-results').innerHTML = `<div class="empty-state"><p>Digite para buscar.</p></div>`;
+    return;
+  }
+  const results = allEntries.filter(e => {
+    const matchTerm = !term || [e.headline, e.lead, e.palavra, ...(e.gratidoes||[])].some(s => s?.toLowerCase().includes(term));
+    const matchEixo = !eixo || (e.eixos||[]).includes(eixo);
+    return matchTerm && matchEixo;
+  });
+  document.getElementById('search-results').innerHTML = results.length
+    ? results.map(entryCardHTML).join('')
+    : `<div class="empty-state"><p>Nenhum resultado.</p></div>`;
+};
+
+// ── SEMANA ──
+function renderReport() {
+  const now = new Date();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0,0,0,0);
+  const weekEntries = allEntries.filter(e => toDate(e.createdAt) >= startOfWeek);
+
+  document.getElementById('report-period').textContent =
+    `${startOfWeek.getDate()} ${MONTHS_SHORT[startOfWeek.getMonth()]} – ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]} · ${weekEntries.length} edição(ões)`;
+
+  const top3 = weekEntries.slice(0,3);
+  document.getElementById('report-headlines').innerHTML = top3.length === 0
+    ? `<div class="empty-state"><p>Nenhuma entrada esta semana.</p></div>`
+    : top3.map(e => { const d = toDate(e.createdAt); return `<div class="headline-item"><span class="headline-day">${DAYS_PT[d.getDay()]}</span><span class="headline-text">"${e.headline}"</span></div>`; }).join('');
+
+  renderRodaChart(weekEntries);
+
+  const streaks = calcAllStreaks();
+  const record = calcRecord();
+  document.getElementById('streak-history').innerHTML = streaks.length === 0
+    ? `<div class="empty-state"><p>Sem sequências ainda.</p></div>`
+    : streaks.map((s,i) => { const d = new Date(s.end); return `<div class="streak-hist-item"><div class="streak-hist-num">${s.days}</div><div class="streak-hist-info"><div class="streak-hist-label">${s.days} dia${s.days>1?'s':''} seguidos</div><div class="streak-hist-label" style="font-size:11px;">até ${d.getDate()} de ${MONTHS_PT[d.getMonth()]}</div></div>${(s.days===record&&i===0)?'<span class="streak-hist-badge">RECORDE</span>':''}</div>`; }).join('');
+
+  const allWords = weekEntries.flatMap(e=>e.gratidoes||[]).join(' ').toLowerCase().replace(/[.,!?;:]/g,'').split(/\s+/).filter(w=>w.length>3);
+  const freq = {};
+  allWords.forEach(w=>{freq[w]=(freq[w]||0)+1;});
+  const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  if (sorted.length > 0) {
+    const max = sorted[0][1];
+    document.getElementById('word-cloud-block').style.display = 'block';
+    document.getElementById('word-cloud-words').innerHTML = sorted.map(([w,c])=>`<span class="word-cloud-word" style="font-size:${Math.round(15+(c/max)*14)}px;">${w}</span>`).join('');
+  } else { document.getElementById('word-cloud-block').style.display = 'none'; }
+}
+
+// ── RODA DA VIDA ──
+function renderRodaChart(entries) {
+  const eixoCount = {};
+  entries.forEach(e=>(e.eixos||[]).forEach(x=>{eixoCount[x]=(eixoCount[x]||0)+1;}));
+  const canvas = document.getElementById('roda-chart');
+  const ctx = canvas.getContext('2d');
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const gridColor = isDark ? 'rgba(240,235,224,0.15)' : 'rgba(15,14,12,0.1)';
+  const strokeColor = isDark ? '#e09030' : '#b8720a';
+  const fillColor = isDark ? 'rgba(224,144,48,0.2)' : 'rgba(184,114,10,0.2)';
+
+  const cx=130, cy=130, r=110;
+  const eixos = Object.keys(EIXOS_COLORS);
+  const n = eixos.length;
+  const maxVal = Math.max(...Object.values(eixoCount), 1);
+
+  ctx.clearRect(0,0,260,260);
+  for (let ring=1;ring<=5;ring++) {
+    ctx.beginPath(); ctx.arc(cx,cy,r*ring/5,0,Math.PI*2);
+    ctx.strokeStyle=gridColor; ctx.lineWidth=0.5; ctx.stroke();
+  }
+  eixos.forEach((_,i)=>{
+    const angle=(i/n)*Math.PI*2-Math.PI/2;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(angle)*r,cy+Math.sin(angle)*r);
+    ctx.strokeStyle=gridColor; ctx.lineWidth=0.5; ctx.stroke();
+  });
+  ctx.beginPath();
+  eixos.forEach((eixo,i)=>{
+    const angle=(i/n)*Math.PI*2-Math.PI/2;
+    const val=((eixoCount[eixo]||0)/maxVal)*r;
+    const x=cx+Math.cos(angle)*val, y=cy+Math.sin(angle)*val;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath(); ctx.fillStyle=fillColor; ctx.fill(); ctx.strokeStyle=strokeColor; ctx.lineWidth=2; ctx.stroke();
+  eixos.forEach((eixo,i)=>{
+    const angle=(i/n)*Math.PI*2-Math.PI/2;
+    const val=((eixoCount[eixo]||0)/maxVal)*r;
+    ctx.beginPath(); ctx.arc(cx+Math.cos(angle)*val,cy+Math.sin(angle)*val,4,0,Math.PI*2);
+    ctx.fillStyle=EIXOS_COLORS[eixo]; ctx.fill();
+  });
+  const sorted=Object.entries(eixoCount).sort((a,b)=>b[1]-a[1]);
+  const legend=document.getElementById('roda-legend');
+  if (!sorted.length) { legend.innerHTML=`<div style="font-size:13px;color:var(--muted);">Nenhum eixo registrado esta semana.</div>`; return; }
+  const max2=sorted[0][1];
+  legend.innerHTML=sorted.map(([eixo,count])=>`<div class="chart-legend-item"><div class="chart-legend-bar" style="width:${Math.round((count/max2)*120)}px;background:${EIXOS_COLORS[eixo]};"></div><span class="chart-legend-label">${eixo}</span><span class="chart-legend-count">${count}</span></div>`).join('');
+}
+
+// ── MÊS ──
+function populateMonthSelect() {
+  const select = document.getElementById('month-select');
+  const months = new Set();
+  allEntries.forEach(e=>{const d=toDate(e.createdAt);months.add(`${d.getFullYear()}-${String(d.getMonth()).padStart(2,'0')}`);});
+  const now=new Date();
+  months.add(`${now.getFullYear()}-${String(now.getMonth()).padStart(2,'0')}`);
+  select.innerHTML=[...months].sort().reverse().map(m=>{const[y,mo]=m.split('-').map(Number);return`<option value="${m}">${MONTHS_PT[mo]} de ${y}</option>`;}).join('');
+}
+
+window.renderMonth = () => {
+  const val=document.getElementById('month-select').value; if(!val) return;
+  const[year,month]=val.split('-').map(Number);
+  const me=allEntries.filter(e=>{const d=toDate(e.createdAt);return d.getFullYear()===year&&d.getMonth()===month;});
+  const container=document.getElementById('month-entries');
+  const exportBtn=document.getElementById('export-btn');
+  if(!me.length){container.innerHTML=`<div class="empty-state"><p>Nenhuma entrada neste mês.</p></div>`;exportBtn.style.display='none';return;}
+  container.innerHTML=me.map(e=>{
+    const d=toDate(e.createdAt);
+    const tags=(e.eixos||[]).map(t=>`<span class="chip-tag">${t}</span>`).join('');
+    const grats=(e.gratidoes||[]).map((g,i)=>`<span>${i+1}. ${g}</span>`).join('');
+    return`<div class="month-entry"><div class="month-entry-date">${DAYS_FULL[d.getDay()]}, ${d.getDate()} de ${MONTHS_PT[d.getMonth()]}</div><div class="month-entry-headline">"${e.headline}"</div>${e.lead?`<div class="month-entry-lead">${e.lead}</div>`:''}`+
+    `${grats?`<div class="month-entry-grat">${grats}</div>`:''}${tags?`<div class="month-entry-tags">${tags}</div>`:''}</div>`;
+  }).join('');
+  exportBtn.style.display='block';
+};
+
+window.exportMonth = () => {
+  const val=document.getElementById('month-select').value; if(!val) return;
+  const[year,month]=val.split('-').map(Number);
+  const me=allEntries.filter(e=>{const d=toDate(e.createdAt);return d.getFullYear()===year&&d.getMonth()===month;});
+  let text=`CHAMA DA FELICIDADE\nRelatório de ${MONTHS_PT[month]} de ${year}\n${'─'.repeat(40)}\n\nTotal: ${me.length} entradas\n\n`;
+  me.forEach((e,i)=>{
+    const d=toDate(e.createdAt);
+    text+=`${i+1}. ${DAYS_FULL[d.getDay()]}, ${d.getDate()} de ${MONTHS_PT[d.getMonth()]}\n📰 ${e.headline}\n`;
+    if(e.lead) text+=`\n${e.lead}\n`;
+    if(e.palavra) text+=`\nPalavra do dia: ${e.palavra}\n`;
+    if(e.gratidoes?.length){text+=`\nGratidão:\n`;e.gratidoes.forEach((g,j)=>{text+=`  ${j+1}. ${g}\n`;});}
+    if(e.eixos?.length) text+=`\nEixos: ${e.eixos.join(', ')}\n`;
+    text+=`\n${'─'.repeat(40)}\n\n`;
+  });
+  if(navigator.share){navigator.share({title:`Chama da Felicidade — ${MONTHS_PT[month]} ${year}`,text}).catch(console.error);}
+  else{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));a.download=`chama-${MONTHS_PT[month].toLowerCase()}-${year}.txt`;a.click();}
+};
+
+// ── UTILS ──
+function toDate(ts) { if(!ts) return new Date(); if(ts.toDate) return ts.toDate(); return new Date(ts); }
+
+window.showToast = (msg) => {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+};
+
+// ── CHAR COUNTERS ──
+document.getElementById('inp-headline').addEventListener('input',function(){document.getElementById('headline-count').textContent=this.value.length;});
+document.getElementById('inp-lead').addEventListener('input',function(){document.getElementById('lead-count').textContent=this.value.length;});
+
+// ── CHIPS ──
+document.querySelectorAll('.eixo-chip').forEach(chip=>chip.addEventListener('click',()=>chip.classList.toggle('active')));
+
+// ── SERVICE WORKER ──
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(console.error);
+if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
+</script>
+</body>
+</html>
