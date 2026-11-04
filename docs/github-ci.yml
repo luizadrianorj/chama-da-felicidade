@@ -1,0 +1,22 @@
+name: Validar Chama da Felicidade
+on:
+  push:
+    branches: [main, 'manus/**']
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validar sintaxe
+        run: npm run check
+      - name: Testar com dados simulados
+        run: npm test
+      - name: Validar manifesto
+        run: node -e "JSON.parse(require('fs').readFileSync('manifest.json','utf8'))"
