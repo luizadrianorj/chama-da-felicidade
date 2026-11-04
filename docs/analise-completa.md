@@ -108,9 +108,9 @@ O service worker original apagava todo cache da origem cujo nome fosse diferente
 
 O original concentrava estilos, telas, integração e cálculos em um HTML, sem testes ou CI. O README citava um projeto Firebase diferente do configurado no app.
 
-**Executado:** módulos separados, testes Node sem dependências adicionais, documentação corrigida e propostas Firebase versionadas. A configuração Pages foi consultada: publica `main`, pasta raiz. A entrega de revisão não deve mudar essa origem nem fazer merge automático.
+**Executado:** módulos separados, testes Node sem dependências adicionais, documentação corrigida, propostas Firebase versionadas e CI de validação no GitHub Actions. Os testes passaram localmente e as duas execuções de CI consultadas concluíram com sucesso. O pull request de revisão é o número 1, em rascunho. A configuração Pages publica `main`, pasta raiz; essa branch permanece no commit original, sem merge.
 
-**Depois:** empacotar e atualizar o Firebase com versões travadas, manter testes de regressão, automatizar validação em Actions e migrar o deploy Pages de forma controlada. Não há motivo para trocar Firebase ou refazer o app em outro framework só por organização. A revisão atual conserva seus dados e seu fluxo de hospedagem.
+**Depois:** empacotar e atualizar o Firebase com versões travadas, manter testes de regressão e migrar o deploy Pages de forma controlada. O CI atual valida, mas não publica automaticamente. Não há motivo para trocar Firebase ou refazer o app em outro framework só por organização. A revisão atual conserva seus dados e seu fluxo de hospedagem.
 
 ## Próxima etapa recomendada
 
