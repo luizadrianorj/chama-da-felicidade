@@ -1,6 +1,6 @@
 /* global caches, fetch, Response */
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3-felicidade';
 const LEGACY_CACHE = 'chama-v1';
 const REGISTRATION_SCOPE = new URL(
   self.registration?.scope || self.location?.href || 'http://localhost/'
@@ -24,9 +24,11 @@ const SHELL_ASSETS = [
   './js/app.js',
   './js/core.js',
   './js/catalog.js',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
+  './manifest.json?v=felicidade-20261104',
+  './icon-192.png?v=felicidade-20261104',
+  './icon-512.png?v=felicidade-20261104',
+  './apple-touch-icon.png?v=felicidade-20261104',
+  './favicon-32.png?v=felicidade-20261104',
 ].map((asset) => new URL(asset, SCOPE_URL).href);
 const STATIC_ASSET_PATHS = new Set(
   SHELL_ASSETS.map((asset) => new URL(asset).pathname)

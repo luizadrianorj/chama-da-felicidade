@@ -166,6 +166,7 @@ test('activate removes only this scope cache versions and safe legacy cache', as
     cacheNames: [
       `${scopeKey}v1`,
       `${scopeKey}v2`,
+      `${scopeKey}v3-felicidade`,
       'chama-v1',
       'kpi-tracker-v4',
       'other-app-cache',
@@ -177,8 +178,9 @@ test('activate removes only this scope cache versions and safe legacy cache', as
   assert.deepEqual(harness.deleted.sort(), [
     'chama-v1',
     `${scopeKey}v1`,
+    `${scopeKey}v2`,
   ].sort());
-  assert.ok(harness.cachesByName.has(`${scopeKey}v2`));
+  assert.ok(harness.cachesByName.has(`${scopeKey}v3-felicidade`));
   assert.ok(harness.cachesByName.has('kpi-tracker-v4'));
   assert.ok(harness.cachesByName.has('other-app-cache'));
 });
@@ -219,7 +221,7 @@ test('navigation uses cached index.html when the network is offline', async () =
   harness.cachesByName.delete('placeholder');
 
   // Populate the cache selected by the SW after its version is derived from scope.
-  const ownCacheName = 'chama-chama-da-felicidade-v2';
+  const ownCacheName = 'chama-chama-da-felicidade-v3-felicidade';
   harness.cachesByName.set(ownCacheName, cache);
 
   const dispatched = harness.event('fetch', {
@@ -248,7 +250,7 @@ test('install resolves the complete shell from registration scope', async () => 
   await dispatched.settle();
 
   const [cacheName] = harness.opened;
-  assert.equal(cacheName, 'chama-chama-da-felicidade-v2');
+  assert.equal(cacheName, 'chama-chama-da-felicidade-v3-felicidade');
   const [assets] = harness.cachesByName.get(cacheName).addAllCalls;
   assert.deepEqual(assets, [
     `${SCOPE}`,
@@ -257,9 +259,11 @@ test('install resolves the complete shell from registration scope', async () => 
     `${SCOPE}js/app.js`,
     `${SCOPE}js/core.js`,
     `${SCOPE}js/catalog.js`,
-    `${SCOPE}manifest.json`,
-    `${SCOPE}icon-192.png`,
-    `${SCOPE}icon-512.png`,
+    `${SCOPE}manifest.json?v=felicidade-20261104`,
+    `${SCOPE}icon-192.png?v=felicidade-20261104`,
+    `${SCOPE}icon-512.png?v=felicidade-20261104`,
+    `${SCOPE}apple-touch-icon.png?v=felicidade-20261104`,
+    `${SCOPE}favicon-32.png?v=felicidade-20261104`,
   ]);
   assert.ok(assets.every((asset) => new URL(asset).origin === new URL(SCOPE).origin));
 });
