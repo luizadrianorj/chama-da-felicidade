@@ -2,21 +2,26 @@
   "name": "Chama da Felicidade",
   "short_name": "Chama",
   "description": "Diário de gratidão e manchetes do seu dia",
-  "start_url": "/chama-da-felicidade/",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "lang": "pt-BR",
   "display": "standalone",
   "background_color": "#f5f0e8",
   "theme_color": "#0f0e0c",
-  "orientation": "portrait",
+  "orientation": "any",
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

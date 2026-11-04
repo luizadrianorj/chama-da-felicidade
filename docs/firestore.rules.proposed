@@ -1,0 +1,48 @@
+// PROPOSTA NÃO IMPLANTADA. Testar no Emulator/Rules Playground e revisar
+// campos dos registros legados antes de substituir regras de produção.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function text(value, maximum) {
+      return value is string && value.size() > 0 && value.size() <= maximum;
+    }
+    function gratitudesValid(values) {
+      return values is list && values.size() >= 1 && values.size() <= 3
+        && text(values[0], 200)
+        && (values.size() < 2 || text(values[1], 200))
+        && (values.size() < 3 || text(values[2], 200));
+    }
+    function valid(data) {
+      let lead = data.get('lead', '');
+      let word = data.get('palavra', '');
+      let axes = data.get('eixos', []);
+      return data.keys().hasAll(['uid', 'headline', 'gratidoes', 'createdAt'])
+        && data.keys().hasOnly(['uid', 'headline', 'lead', 'gratidoes', 'palavra', 'eixos', 'createdAt'])
+        && data.uid is string && data.uid == request.auth.uid
+        && text(data.headline, 120)
+        && lead is string && lead.size() <= 500
+        && word is string && word.size() <= 30
+        && gratitudesValid(data.gratidoes)
+        && axes is list && axes.size() <= 12
+        && axes.hasOnly([
+          'Saúde e Disposição', 'Desenvolvimento Intelectual', 'Equilíbrio Emocional',
+          'Realização e Propósito', 'Recursos Financeiros', 'Contribuição Social',
+          'Relacionamento Amoroso', 'Família', 'Vida Social',
+          'Criatividade e Hobbies', 'Plenitude e Felicidade', 'Espiritualidade'
+        ])
+        && data.createdAt is timestamp;
+    }
+    match /chamadas/{id} {
+      allow read, delete: if signedIn() && resource.data.uid == request.auth.uid;
+      allow create: if signedIn() && valid(request.resource.data);
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['headline', 'lead', 'gratidoes', 'palavra', 'eixos'])
+        && valid(request.resource.data);
+    }
+  }
+}

@@ -1,87 +1,29 @@
-# Chama da Felicidade 🔥
+# Chama da Felicidade — primeira rodada de melhorias
 
-Diário pessoal com gratidão, manchete jornalística do dia e Roda da Vida.
+Esta versão preserva o diário existente, o Firebase e o estilo editorial. É uma versão de revisão: o GitHub Pages original continua publicando a branch `main` do repositório `luizadrianorj/chama-da-felicidade`. Não há migração de dados nem implantação automática de regras Firebase.
 
-## Deploy no GitHub Pages
+## Prévia e validação local
 
-### 1. Criar repositório
-```
-Nome: chama-da-felicidade
-Visibilidade: Public
-```
+Os arquivos públicos estão na raiz para preservar a publicação atual do GitHub Pages. Rode `npm run dev` e abra a porta 3000. O botão **Explorar demonstração** carrega dados fictícios em memória, permite exercitar as telas e não grava no Firestore. Alterações de demonstração desaparecem ao sair ou recarregar.
 
-### 2. Configurar Firebase
+`npm test` executa testes Node com funções puras e mocks DOM/Firebase/service worker, sem acessar dados reais. `npm run check` verifica a sintaxe JavaScript. Não existem dependências npm para instalar nesta rodada.
 
-No arquivo `index.html`, substitua o objeto `firebaseConfig` com os dados do seu projeto Firebase (`kpi-tracker-f0b35`):
+## Organização
 
-```js
-const firebaseConfig = {
-  apiKey: "sua-api-key",
-  authDomain: "kpi-tracker-f0b35.firebaseapp.com",
-  projectId: "kpi-tracker-f0b35",
-  storageBucket: "kpi-tracker-f0b35.appspot.com",
-  messagingSenderId: "seu-messaging-sender-id",
-  appId: "seu-app-id"
-};
-```
+`index.html` contém as telas; `styles.css`, o visual e a acessibilidade; `js/app.js`, sessão, interface e integração Firebase; `js/core.js`, validação, busca e cálculos testáveis; `js/catalog.js`, textos e categorias preservados; `sw.js`, o shell e atualização da PWA. Os testes estão em `tests/`; a auditoria e propostas Firebase ficam em `docs/`.
 
-Para encontrar esses valores: Firebase Console → Configurações do Projeto → Seus apps.
+## Melhorias desta rodada
 
-### 3. Firebase — Regras do Firestore
+Os dados exibidos são escapados; os IDs de ações não são interpolados em handlers JavaScript. A troca de sessão limpa o contexto privado e descarta respostas antigas. O histórico tem paginação de 100 documentos por vez, estados de erro e nova tentativa, sem apagar registros já carregados. Busca combina texto normalizado, área e período inclusivo. Criar e editar usam a mesma validação; a edição inclui palavra e áreas. Os modais têm foco gerenciado, Escape e fundo inerte.
 
-No Firebase Console → Firestore → Regras:
+O rascunho fica em `sessionStorage`, separado por usuário e caminho. Resiste ao recarregamento na mesma aba e é removido ao sair. Não é criptografado, não sobrevive garantidamente ao fechamento da aba e não é um backup. O backup JSON é exportado explicitamente pelo usuário, informa se o histórico está parcial e contém conteúdo pessoal.
 
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /chamadas/{doc} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.uid;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.uid;
-    }
-  }
-}
-```
+Os relatórios diferenciam registros, dias, gratidões e áreas. A frequência de áreas não é nota de satisfação. As datas usam o calendário local do dispositivo e as sequências deixam de comparar diferenças fixas de 24 horas. O app mantém domingo como início de semana, agora explicitamente rotulado.
 
-### 4. Firebase — Domínio autorizado
+A PWA armazena apenas o shell próprio, com caminhos relativos ao escopo e cache isolado; a atualização é oferecida ao usuário, sem recarga automática durante digitação. Não há cache persistente de diários nem sincronização offline de escritas nesta rodada. Sem rede, o shell/demonstração podem funcionar após instalação; login e acesso real ao Firestore continuam dependentes de conexão. Não são solicitadas permissões de notificação.
 
-Firebase Console → Authentication → Settings → Authorized domains:
-Adicione: `luizadrianorj.github.io`
+## Antes da publicação
 
-### 5. Upload dos arquivos
+Ler `docs/analise-completa.md` e `docs/firebase-revisao.md`. Confirmar regras, índices, domínio autorizado e login real no Firebase/Safari antes de mesclar a versão. `firestore.rules.proposed` e `firestore.indexes.proposed.json` são propostas não implantadas; não executar deploy sem revisar os documentos legados e testar no emulador.
 
-Suba para o repositório:
-- `index.html`
-- `manifest.json`
-- `sw.js`
-- `icon-192.png` (ícone 192×192px)
-- `icon-512.png` (ícone 512×512px)
-
-### 6. Ativar GitHub Pages
-
-Settings → Pages → Branch: `main` → `/root` → Save
-
-O app ficará em:
-`https://luizadrianorj.github.io/chama-da-felicidade`
-
-## Estrutura dos dados (Firestore)
-
-Coleção: `chamadas`
-
-```json
-{
-  "uid": "string (ID do usuário)",
-  "headline": "string (manchete do dia)",
-  "lead": "string (texto jornalístico)",
-  "gratidoes": ["string", "string", "string"],
-  "eixos": ["Saúde e Disposição", "Família"],
-  "createdAt": "Timestamp"
-}
-```
-
-## Notificações diárias (21h)
-
-As notificações push nativas exigem HTTPS (já garantido pelo GitHub Pages).
-O app solicita permissão de notificação automaticamente no primeiro acesso.
-Para agendar notificações recorrentes às 21h, você pode usar um serviço como
-OneSignal (gratuito) ou configurar via Firebase Cloud Messaging no futuro.
+Ainda estão no roadmap: garantia transacional de uma chama por usuário/dia, resolução de edições concorrentes, fuso fixo de negócio, avaliações reais da Roda da Vida ao longo do tempo, importação/restauração do backup, cache persistente privado opt-in, upgrade e empacotamento das dependências Firebase e publicação Pages via Actions. Lembretes, tarefas recorrentes e IA não foram selecionados.
